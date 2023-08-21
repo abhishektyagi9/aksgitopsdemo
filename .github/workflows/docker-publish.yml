@@ -20,7 +20,7 @@ on:
         required: true
         type: string
       APPNAME:
-        description: 'The Name of the Application to deploy'
+        description: 'The Name of the Application to deploy
         default: "details"
         required: true
         type: string
