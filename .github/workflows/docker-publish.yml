@@ -21,7 +21,7 @@ on:
         type: string
       APPNAME:
         description: 'The Name of the Application to deploy'
-        default: "bookinfo"
+        default: "details"
         required: true
         type: string
       ENVIRONMENT:
@@ -80,7 +80,7 @@ jobs:
         env:
           APPNAME: "${{ inputs.APPNAME }}"
         run: |
-          cd "workloads/$APPNAME"
+          cd "bookinfo/src/$APPNAME"
           docker build . -t ${{ inputs.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.run_number }}
           docker push ${{ inputs.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.run_number }}
 
