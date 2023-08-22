@@ -18,33 +18,26 @@ on:
       - main
     paths:
       - 'bookinfo/src/reviews/**'
-    inputs:
-      ACRNAME:
-        default: "acraksclusterdemo"
-        description: 'The Name of the ACR resource'
-        required: true
-        type: string
-      APPNAME:
-        description: 'The Name of the Application to deploy'
-        default: "reviews"
-        required: true
-        type: string
-      ENVIRONMENT:
-        default: "dev"
-        description: 'A GitHub Environment to pull action secrets froms'
-        required: true
-        type: environment
 
 permissions:
       id-token: write
       contents: write
-
 jobs:
   BuildPush:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.Environment }}
+    environment: prod
     steps:
-    
+      - name: Get ACR Name
+        id: acrname
+        run: |
+          acrname="acraksclusterdemo"
+          echo "::set-output name=acrname::$acrname"
+      - name: Get App Name
+        id: appname
+        run: |
+          appname="reviews"
+          echo "::set-output name=appname::$appname"
+
       # Get the application code from the repo
       - name: Get application code from the repo
         uses: actions/checkout@main
@@ -63,8 +56,8 @@ jobs:
       - name: Connect to Azure Container Registry (ACR)
         id: acrconnect
         run: |
-          echo "Retrieving access token from ${{ inputs.ACRNAME}}"
-          TOKEN=$(az acr login -n ${{ inputs.ACRNAME}} --expose-token)
+          echo "Retrieving access token from ${{ steps.acrname.outputs.acrname }}"
+          TOKEN=$(az acr login -n ${{ steps.acrname.outputs.acrname }} --expose-token)
 
           if [ -z "$TOKEN" ]
           then
@@ -84,11 +77,11 @@ jobs:
       # Builds and Pushes the container image to the Azure Container Registry (ACR)
       - name: Container build and push to a Azure Container Registry (ACR)
         env:
-          APPNAME: "${{ inputs.APPNAME }}"
+          APPNAME: "${{ steps.appname.outputs.appname }}"
         run: |
-          cd "bookinfo/src/$APPNAME"
-          docker build . -t ${{ inputs.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.run_number }}
-          docker push ${{ inputs.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.run_number }}
+          cd "bookinfo/src/${{ steps.appname.outputs.appname }}"
+          docker build . -t ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
+          docker push ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
 
   Update-K8s-Manifests:
     name: Update K8s Deployment Manifest with Image Version
@@ -97,22 +90,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    # Checks out the baseline repository
-    - uses: actions/checkout@v2
+      # Checks out the baseline repository
+      - uses: actions/checkout@v2
 
-    - name: Update image name in manifest file
-      uses: azure/powershell@v1
-      with:
-        inlineScript: |
-          $line = Get-Content plateform/kube/reviews.yaml | Select-String image: | Select-Object -ExpandProperty Line
-          $content = Get-Content plateform/kube/reviews.yaml
-          $content | ForEach-Object {$_ -replace $line,"        image: ${{ inputs.ACRNAME }}.azurecr.io/${{ inputs.APPNAME }}:${{ github.run_number }}"} | Set-Content plateform/kube/reviews.yaml
-        azPSVersion: "latest"
+      - name: Update image name in manifest file
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $line = Get-Content bookinfo/k8s/reviews.yaml | Select-String image: | Select-Object -ExpandProperty Line
+            $content = Get-Content bookinfo/k8s/reviews.yaml
+            $content | ForEach-Object {$_ -replace $line,"        image: ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}"} | Set-Content bookinfo/k8s/reviews.yaml
+          azPSVersion: "latest"
     
-    - name: Commit changes in manifest to repo
-      run: | 
-        git config user.name "GitHub Actions Bot"
-        git config user.email ""
-        git add plateform/kube/reviews.yaml
-        git commit -m "Update image version in K8s Deployment manifests file"
-        git push origin
+      - name: Commit changes in manifest to repo
+        run: | 
+          git config user.name "GitHub Actions Bot"
+          git config user.email ""
+          git add bookinfo/k8s/reviews.yaml
+          git commit -m "Update image version in K8s Deployment manifests file"
+          git push origin
