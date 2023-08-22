@@ -22,22 +22,21 @@ on:
 permissions:
       id-token: write
       contents: write
-
 jobs:
   BuildPush:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-    - name: Get ACR Name
-      id: acrname
-      run: |
-        acrname="acraksclusterdemo"
-        echo "::set-output name=acrname::$acrname"
-    - name: Get App Name
-      id: appname
-      run: |
-        appname="details"
-        echo "::set-output name=appname::$appname"
+      - name: Get ACR Name
+        id: acrname
+        run: |
+          acrname="acraksclusterdemo"
+          echo "::set-output name=acrname::$acrname"
+      - name: Get App Name
+        id: appname
+        run: |
+          appname="details"
+          echo "::set-output name=appname::$appname"
 
       # Get the application code from the repo
       - name: Get application code from the repo
@@ -78,7 +77,7 @@ jobs:
       # Builds and Pushes the container image to the Azure Container Registry (ACR)
       - name: Container build and push to a Azure Container Registry (ACR)
         env:
-          APPNAME: "${{ inputs.APPNAME }}"
+          APPNAME: "${{ $appname }}"
         run: |
           cd "bookinfo/src/$APPNAME"
           docker build . -t ${{ variables.ACRNAME }}.azurecr.io/${{ $appname }}:${{ github.run_number }}
@@ -91,22 +90,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    # Checks out the baseline repository
-    - uses: actions/checkout@v2
+      # Checks out the baseline repository
+      - uses: actions/checkout@v2
 
-    - name: Update image name in manifest file
-      uses: azure/powershell@v1
-      with:
-        inlineScript: |
-          $line = Get-Content plateform/kube/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
-          $content = Get-Content plateform/kube/details.yaml
-          $content | ForEach-Object {$_ -replace $line,"        image: ${{ variables.ACRNAME }}.azurecr.io/${{ $appname }}:${{ github.run_number }}"} | Set-Content plateform/kube/details.yaml
-        azPSVersion: "latest"
+      - name: Update image name in manifest file
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $line = Get-Content plateform/kube/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
+            $content = Get-Content plateform/kube/details.yaml
+            $content | ForEach-Object {$_ -replace $line,"        image: ${{ variables.ACRNAME }}.azurecr.io/${{ $appname }}:${{ github.run_number }}"} | Set-Content plateform/kube/details.yaml
+          azPSVersion: "latest"
     
-    - name: Commit changes in manifest to repo
-      run: | 
-        git config user.name "GitHub Actions Bot"
-        git config user.email ""
-        git add plateform/kube/details.yaml
-        git commit -m "Update image version in K8s Deployment manifests file"
-        git push origin
+      - name: Commit changes in manifest to repo
+        run: | 
+          git config user.name "GitHub Actions Bot"
+          git config user.email ""
+          git add plateform/kube/details.yaml
+          git commit -m "Update image version in K8s Deployment manifests file"
+          git push origin
