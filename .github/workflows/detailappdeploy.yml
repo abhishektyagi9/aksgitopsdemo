@@ -28,17 +28,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-     - name : Get ACR Name
-       id: acrname
-       run: |
-         acrname="acraksclusterdemo"
-         echo "::set-output name=acrname::$acrname"
-      - name : Get App Name
-        id: appname
-        run: |
+    - name: Get ACR Name
+      id: acrname
+      run: |
+          acrname="acraksclusterdemo"
+          echo "::set-output name=acrname::$acrname"
+    - name: Get App Name
+      id: appname
+      run: |
           appname="details"
           echo "::set-output name=appname::$appname"
-    
+
       # Get the application code from the repo
       - name: Get application code from the repo
         uses: actions/checkout@main
