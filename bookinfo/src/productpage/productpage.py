@@ -103,7 +103,7 @@ request_result_counter = Counter('request_result', 'Results of requests', ['dest
 #
 # Although Istio proxies are able to automatically send spans, they need some
 # hints to tie together the entire trace. Applications need to propagate the
-# appropriate HTTP headers so that when the proxies send span information, the
+# appropriate HTTPS headers so that when the proxies send span information, the
 # spans can be correlated correctly into a single trace.
 #
 # To do this, an application needs to collect and propagate headers from the
