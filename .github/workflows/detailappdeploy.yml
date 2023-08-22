@@ -30,7 +30,7 @@ on:
         required: true
         type: string
       ENVIRONMENT:
-        default: "dev"
+        default: "prod"
         description: 'A GitHub Environment to pull action secrets froms'
         required: true
         type: environment
