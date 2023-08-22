@@ -10,7 +10,7 @@
 # This workflow demonstrates building and pushing a container image to an Azure Container Registry.
 # The workflow then updates the necessary Kubernetes manifest deployment files in the GitHub repo so that a GitOps operator can sync them to deploy an application to an Azure Kubernetes Service cluster.
 # It is split into separate jobs for readability but could be squashed into a single job if that best suits your scenario.
-name: App Deploy Flask - GitOps
+name: App Deploy reviews - GitOps
 
 on: 
   push:
