@@ -42,7 +42,7 @@ permissions:
 jobs:
   BuildPush:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.Environment }}
+    environment: prod
     steps:
     
       # Get the application code from the repo
