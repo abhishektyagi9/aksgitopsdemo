@@ -10,7 +10,7 @@
 # This workflow demonstrates building and pushing a container image to an Azure Container Registry.
 # The workflow then updates the necessary Kubernetes manifest deployment files in the GitHub repo so that a GitOps operator can sync them to deploy an application to an Azure Kubernetes Service cluster.
 # It is split into separate jobs for readability but could be squashed into a single job if that best suits your scenario.
-name: App Deploy Details - GitOps
+name: App Deploy details - GitOps
 
 on: 
   push:
@@ -82,14 +82,14 @@ jobs:
           cd "bookinfo/src/${{ steps.appname.outputs.appname }}"
           docker build . -t ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
           docker push ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
-
+          
   Update-K8s-Manifests:
     name: Update K8s Deployment Manifest with Image Version
     needs: BuildPush
     environment: ${{ inputs.Environment }}
     runs-on: ubuntu-latest
     steps:
-     - name: Get ACR Name
+      - name: Get ACR Name
         id: acrname
         run: |
           acrname="acraksclusterdemo"
@@ -99,7 +99,6 @@ jobs:
         run: |
           appname="details"
           echo "::set-output name=appname::$appname"
-
       # Checks out the baseline repository
       - uses: actions/checkout@v2
 
