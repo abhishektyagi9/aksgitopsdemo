@@ -31,7 +31,7 @@ if (process.env.SERVICE_VERSION === 'v-unavailable') {
 
 if (process.env.SERVICE_VERSION === 'v-unhealthy') {
     // make the service unavailable once in 15 minutes for 15 minutes.
-    // 15 minutes is chosen since the Kubernetes's exponential back-off is reset after 10 minutes
+    // 15 minutes is chosen since the Kubernetess exponential back-off is reset after 10 minutes
     // of successful execution
     // see https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
     // Kiali shows the last 10 or 30 minutes, so to show the error rate of 50%,
