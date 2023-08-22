@@ -83,7 +83,7 @@ def fetch_details_from_external_service(isbn, id, headers)
     http.read_timeout = 5 # seconds
 
     # DO_NOT_ENCRYPT is used to configure the details service to use either
-    # HTTP (true) or HTTPS (false, default) when calling the external service to
+    # HTTP (true) or HTTPS (false, default) when callsing the external service to
     # retrieve the book information.
     #
     # Unless this environment variable is set to true, the app will use TLS (HTTPS)
