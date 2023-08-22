@@ -130,7 +130,7 @@ end
 def get_forward_headers(request)
   headers = {}
 
-  # Keep this in sync with the headers in productpage and reviews.
+  # Keep this in sync with the headers in productpage and review.
   incoming_headers = [
       # All applications should propagate x-request-id. This header is
       # included in access log statements and is used for consistent trace
