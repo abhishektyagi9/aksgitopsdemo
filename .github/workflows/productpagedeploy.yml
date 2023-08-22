@@ -82,14 +82,13 @@ jobs:
           cd "bookinfo/src/${{ steps.appname.outputs.appname }}"
           docker build . -t ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
           docker push ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
-
   Update-K8s-Manifests:
     name: Update K8s Deployment Manifest with Image Version
     needs: BuildPush
     environment: ${{ inputs.Environment }}
     runs-on: ubuntu-latest
     steps:
-     - name: Get ACR Name
+      - name: Get ACR Name
         id: acrname
         run: |
           acrname="acraksclusterdemo"
