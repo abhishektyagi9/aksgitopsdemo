@@ -48,7 +48,7 @@ spec:
       serviceAccountName: bookinfo-productpage
       containers:
       - name: productpage
-        image:  acraksclusterdemo.azurecr.io/examples-bookinfo-productpage-v1:1.18.0
+        image: .azurecr.io/:1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9080
