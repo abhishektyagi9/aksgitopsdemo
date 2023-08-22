@@ -97,15 +97,15 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $line = Get-Content plateform/kube/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
+            $line = Get-Content bookinfo/k8s/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
             $content = Get-Content plateform/kube/details.yaml
-            $content | ForEach-Object {$_ -replace $line,"        image: ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}"} | Set-Content plateform/kube/details.yaml
+            $content | ForEach-Object {$_ -replace $line,"        image: ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}"} | Set-Content bookinfo/k8s/details.yaml
           azPSVersion: "latest"
     
       - name: Commit changes in manifest to repo
         run: | 
           git config user.name "GitHub Actions Bot"
           git config user.email ""
-          git add plateform/kube/details.yaml
+          git add bookinfo/k8s/details.yaml
           git commit -m "Update image version in K8s Deployment manifests file"
           git push origin
