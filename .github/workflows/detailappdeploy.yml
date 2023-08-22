@@ -77,7 +77,7 @@ jobs:
       # Builds and Pushes the container image to the Azure Container Registry (ACR)
       - name: Container build and push to a Azure Container Registry (ACR)
         env:
-          APPNAME: "${{ inputs.APPNAME }}"
+          APPNAME: "${{ steps.appname.outputs.appname }}"
         run: |
           cd "bookinfo/src/${{ steps.appname.outputs.appname }}"
           docker build . -t ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}
@@ -93,19 +93,19 @@ jobs:
       # Checks out the baseline repository
       - uses: actions/checkout@v2
 
-    - name: Update image name in manifest file
-      uses: azure/powershell@v1
-      with:
-        inlineScript: |
-          $line = Get-Content plateform/kube/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
-          $content = Get-Content plateform/kube/details.yaml
-          $content | ForEach-Object {$_ -replace $line,"        image: ${{ variables.ACRNAME }}.azurecr.io/${{ $appname }}:${{ github.run_number }}"} | Set-Content plateform/kube/details.yaml
-        azPSVersion: "latest"
+      - name: Update image name in manifest file
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $line = Get-Content plateform/kube/details.yaml | Select-String image: | Select-Object -ExpandProperty Line
+            $content = Get-Content plateform/kube/details.yaml
+            $content | ForEach-Object {$_ -replace $line,"        image: ${{ steps.acrname.outputs.acrname }}.azurecr.io/${{ steps.appname.outputs.appname }}:${{ github.run_number }}"} | Set-Content plateform/kube/details.yaml
+          azPSVersion: "latest"
     
-    - name: Commit changes in manifest to repo
-      run: | 
-        git config user.name "GitHub Actions Bot"
-        git config user.email ""
-        git add plateform/kube/details.yaml
-        git commit -m "Update image version in K8s Deployment manifests file"
-        git push origin
+      - name: Commit changes in manifest to repo
+        run: | 
+          git config user.name "GitHub Actions Bot"
+          git config user.email ""
+          git add plateform/kube/details.yaml
+          git commit -m "Update image version in K8s Deployment manifests file"
+          git push origin
