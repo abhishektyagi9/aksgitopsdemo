@@ -31,13 +31,13 @@ jobs:
     - name: Get ACR Name
       id: acrname
       run: |
-          acrname="acraksclusterdemo"
-          echo "::set-output name=acrname::$acrname"
+        acrname="acraksclusterdemo"
+        echo "::set-output name=acrname::$acrname"
     - name: Get App Name
       id: appname
       run: |
-          appname="details"
-          echo "::set-output name=appname::$appname"
+        appname="details"
+        echo "::set-output name=appname::$appname"
 
       # Get the application code from the repo
       - name: Get application code from the repo
