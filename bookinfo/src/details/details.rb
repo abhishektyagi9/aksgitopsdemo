@@ -55,7 +55,7 @@ server.mount_proc '/details' do |req, res|
     end
 end
 
-# TODO: provide details on different book.
+# TODO: provide details on different books.
 def get_book_details(id, headers)
     if ENV['ENABLE_EXTERNAL_BOOK_SERVICE'] === 'true' then
       # the ISBN of one of Comedy of Errors on the Amazon
