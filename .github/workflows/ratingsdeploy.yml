@@ -89,6 +89,16 @@ jobs:
     environment: ${{ inputs.Environment }}
     runs-on: ubuntu-latest
     steps:
+      - name: Get ACR Name
+        id: acrname
+        run: |
+          acrname="acraksclusterdemo"
+          echo "::set-output name=acrname::$acrname"
+      - name: Get App Name
+        id: appname
+        run: |
+          appname="ratings"
+          echo "::set-output name=appname::$appname"
 
       # Checks out the baseline repository
       - uses: actions/checkout@v2
