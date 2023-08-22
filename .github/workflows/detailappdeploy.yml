@@ -17,7 +17,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/details/**'
+      - 'bookinfo/src/details/**'
     inputs:
       ACRNAME:
         default: "acraksclusterdemo"
