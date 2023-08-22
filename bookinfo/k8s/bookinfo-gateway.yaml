@@ -20,7 +20,7 @@ spec:
       protocol: HTTPS
     tls:
       mode: SIMPLE
-      credentialName: bookinfo-certs
+      credentialName: bitls
     hosts:
     - "*"
 ---
